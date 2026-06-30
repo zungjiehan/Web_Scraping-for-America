@@ -8,9 +8,13 @@
 
 使用方式：
   1. 把你的 Alpha Vantage API Key 填入下方 ALPHA_VANTAGE_KEY
-  2. python3 fetch_us_stocks.py
+  2. python3 fetch_america_stocks.py                # 整批抓排行榜
+  3. python3 fetch_america_stocks.py --symbol AAPL  # 查單一代號（用 Yahoo Finance，
+                                                       因 Alpha Vantage 的排行榜API無法查任意代號）
 """
 
+import argparse
+import json
 import sys
 from datetime import date
 from pathlib import Path
@@ -25,9 +29,9 @@ ALPHA_VANTAGE_KEY = "BX0SNSFNXFFJG4O5"
 
 TODAY = date.today().strftime("%Y-%m-%d")
 DATA_DIR = Path("data") / TODAY
-DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 HEADERS = {"User-Agent": "Mozilla/5.0"}
+YAHOO_BASE = "https://query1.finance.yahoo.com/v8/finance/chart"
 
 
 def fetch_rankings() -> dict:
@@ -114,6 +118,63 @@ def build_price_csv(data: dict) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+# ─────────────────────────────────────────────
+# 單一代號查詢模式（給跨市場對應股價用）
+# 改用 Yahoo Finance，因為 Alpha Vantage 的
+# TOP_GAINERS_LOSERS 只回傳排行榜內股票，查不到任意代號
+# ─────────────────────────────────────────────
+
+def fetch_yahoo_price(ticker: str) -> dict | None:
+    """用 Yahoo Finance 查詢單一美股代號當日資料"""
+    ticker = ticker.strip().upper()
+    url = f"{YAHOO_BASE}/{ticker}"
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=10)
+        if r.status_code != 200:
+            return None
+        result = r.json().get("chart", {}).get("result", [])
+        if not result:
+            return None
+        meta = result[0].get("meta", {})
+        close = float(meta.get("regularMarketPrice", 0) or 0)
+        prev_close = float(meta.get("chartPreviousClose", 0) or meta.get("previousClose", 0) or 0)
+        if close == 0:
+            return None
+        change = round(close - prev_close, 4) if prev_close else 0.0
+        change_pct = round((change / prev_close * 100), 2) if prev_close else 0.0
+        return {
+            "代號": ticker,
+            "收盤": close,
+            "漲跌": change,
+            "漲跌幅": change_pct,
+            "昨收": prev_close,
+        }
+    except Exception:
+        return None
+
+
+def cmd_single_symbol(ticker: str):
+    """CLI 單一代號查詢，輸出 JSON 方便 Claude Code 解析"""
+    result = fetch_yahoo_price(ticker)
+    if result is None:
+        print(json.dumps({"代號": ticker, "找到": False}, ensure_ascii=False))
+        sys.exit(1)
+    output = {
+        "代號": result["代號"],
+        "找到": True,
+        "收盤": result["收盤"],
+        "漲跌幅(%)": result["漲跌幅"],
+        "資料日期": TODAY,
+        "資料來源": "Yahoo Finance（單一代號查詢，非Alpha Vantage排行榜）",
+    }
+    print(json.dumps(output, ensure_ascii=False))
+    sys.exit(0)
+
+
+# ─────────────────────────────────────────────
+# Main
+# ─────────────────────────────────────────────
+
 def main():
     print(f"=== 美股排行榜資料抓取 ===")
     print(f"執行日期：{TODAY}\n")
@@ -121,6 +182,8 @@ def main():
     if ALPHA_VANTAGE_KEY == "填入你的API_KEY":
         print("[錯誤] 請先填入 ALPHA_VANTAGE_KEY")
         sys.exit(1)
+
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     data = fetch_rankings()
     if not data:
@@ -145,4 +208,11 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(0 if main() else 1)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--symbol", help="只查詢單一代號的當日漲跌幅（用Yahoo Finance，不執行整批爬蟲）")
+    args = parser.parse_args()
+
+    if args.symbol:
+        cmd_single_symbol(args.symbol)
+    else:
+        sys.exit(0 if main() else 1)
