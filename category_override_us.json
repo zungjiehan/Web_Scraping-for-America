@@ -1,0 +1,67 @@
+{
+  "_說明": "美股概念分類對照表，由 Web_Scraping-for-America 每日 SOP 自動維護。台股/日股對應資料因跨repo環境限制無法直接讀取 Web_Scraping-for-Taiwan / Web_Scraping-for-Japanese 的CSV與爬蟲，優先採用當日已發布於 #stockanalysis 頻道之同日報告數據，其餘以WebSearch補充並標註來源與日期。",
+  "代號對照": {
+    "ZYBT": {
+      "公司": "Zhengye Biotechnology Holding Ltd 正業生物科技控股",
+      "概念": "中國學名藥/原料藥(API)",
+      "台股對應": [],
+      "日股對應": [],
+      "來源": "WebSearch 2026-07-21"
+    },
+    "ADVB": {
+      "公司": "Advanced Biomed Inc 先進生物醫學",
+      "概念": "微流體生物晶片/精準腫瘤診斷",
+      "台股對應": [],
+      "日股對應": [],
+      "備註": "台南設廠，2026/2進行1:20反分割",
+      "來源": "WebSearch 2026-07-21"
+    },
+    "IREN": {
+      "公司": "IREN Limited",
+      "概念": "AI雲端運算/GPU資料中心（原比特幣礦商轉型）",
+      "台股對應": ["2330 台積電", "3037 欣興", "2308 台達電"],
+      "日股對應": ["285A.T 鎧俠控股Kioxia", "6857.T Advantest愛德萬測試"],
+      "來源": "WebSearch 2026-07-21"
+    },
+    "IREC": { "公司": "Corgi IREN 2x Daily ETF", "概念": "IREN槓桿追蹤ETF（非獨立公司）", "來源": "WebSearch 2026-07-21" },
+    "IREG": { "公司": "Leverage Shares 2x Long IREN Daily ETF", "概念": "IREN槓桿追蹤ETF（非獨立公司）", "來源": "WebSearch 2026-07-21" },
+    "IRE": { "公司": "Defiance 2x Long IREN Daily ETF", "概念": "IREN槓桿追蹤ETF（非獨立公司）", "來源": "WebSearch 2026-07-21" },
+    "IREX": { "公司": "Tradr 2x Long IREN Daily ETF", "概念": "IREN槓桿追蹤ETF（非獨立公司）", "來源": "WebSearch 2026-07-21" },
+    "IREZ": { "公司": "Tradr 2x Short IREN Daily ETF", "概念": "IREN反向追蹤ETF（非獨立公司）", "來源": "WebSearch 2026-07-21" },
+    "ACHR": {
+      "公司": "Archer Aviation",
+      "概念": "eVTOL空中計程車/自主國防載具",
+      "台股對應": ["8033 雷虎", "2634 漢翔", "5371 中光電"],
+      "日股對應": ["6232.T ACSL", "7011.T 三菱重工"],
+      "來源": "WebSearch 2026-07-21"
+    },
+    "ONDS": {
+      "公司": "Ondas Holdings",
+      "概念": "無人機/反制無人機系統",
+      "台股對應": ["8033 雷虎", "2634 漢翔"],
+      "日股對應": ["6232.T ACSL"],
+      "來源": "WebSearch 2026-07-21"
+    },
+    "AMC": { "公司": "AMC Entertainment Holdings", "概念": "電影院線/消費復甦", "來源": "WebSearch 2026-07-21" },
+    "BITO": { "公司": "ProShares Bitcoin Strategy ETF", "概念": "比特幣期貨ETF", "來源": "WebSearch 2026-07-21" },
+    "PATH": { "公司": "UiPath", "概念": "RPA流程自動化軟體", "來源": "WebSearch 2026-07-21" },
+    "ACHX": { "公司": "_待確認", "概念": "_待確認", "備註": "多方查證仍無法確認為何家公司，疑為冷門/場外掛牌標的", "來源": "WebSearch 2026-07-21" }
+  },
+  "_概念股清單": {
+    "AI算力/半導體基礎建設": {
+      "成員": ["IREN", "NVDA", "INTC"],
+      "台股對應": ["2330 台積電", "3037 欣興", "2308 台達電"],
+      "日股對應": ["285A.T 鎧俠控股", "6857.T Advantest"],
+      "備註": "SOX費半指數7/20收跌1.6%、較6月高點回落逾20%進入熊市（中國Moonshot AI「Kimi K3」引發AI資本支出過度疑慮），但IREN逆勢+19.57%（簽28億美元AI雲端合約），屬逆勢個股題材",
+      "來源": "WebSearch 2026-07-21 + #stockanalysis同日報告"
+    },
+    "eVTOL/無人機/自主國防載具": {
+      "成員": ["ACHR", "ONDS"],
+      "_待確認成員": [],
+      "台股對應": ["2634 漢翔", "8033 雷虎", "5371 中光電"],
+      "日股對應": ["6232.T ACSL", "7011.T 三菱重工"],
+      "備註": "僅2檔上榜，未達3檔門檻，列為觀察族群",
+      "來源": "WebSearch 2026-07-21"
+    }
+  }
+}
